@@ -6,15 +6,33 @@ import { Container } from "./styles";
 
 const ListaDeTarefas = () => {
   const { itens } = useSelector((state: RootReducer) => state.tarefas);
-  const { termoBusca } = useSelector((state: RootReducer) => state.filtro);
+  const { termoBusca, criterio, valor } = useSelector(
+    (state: RootReducer) => state.filtro
+  );
 
   const filtraTarefas = () => {
-    return itens.filter(
-      (item) =>
-        item.titulo
-          .toLocaleLowerCase()
-          .search(termoBusca.toLocaleLowerCase()) >= 0
-    );
+    let tarefasFiltradas = itens;
+    if (termoBusca !== undefined) {
+      tarefasFiltradas = tarefasFiltradas.filter(
+        (item) =>
+          item.titulo
+            .toLocaleLowerCase()
+            .search(termoBusca.toLocaleLowerCase()) >= 0
+      );
+
+      if (criterio === "prioridade") {
+        tarefasFiltradas = tarefasFiltradas.filter(
+          (item) => item.prioridade === valor
+        );
+      } else if (criterio === "status") {
+        tarefasFiltradas = tarefasFiltradas.filter(
+          (item) => item.status === valor
+        );
+      }
+      return tarefasFiltradas;
+    } else {
+      return itens;
+    }
   };
   return (
     <Container>
